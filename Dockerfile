@@ -1,11 +1,18 @@
-# 1. Start from a lightweight Linux environment with Python 3.11 pre-installed
+# 1. Base Linux image with Python pre-installed
 FROM python:3.11-slim
 
-# 2. Create a working folder inside the container
+# 2. Set directory inside container
 WORKDIR /app
 
-# 3. Copy our local Python script into the container
+# 3. Copy requirements list and install libraries
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 4. Copy the application code
 COPY main.py .
 
-# 4. Command to run when the container starts
-CMD ["python", "main.py"]
+# 5. Tell Docker the container communicates through port 8000
+EXPOSE 8000
+
+# 6. Start the web server
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
